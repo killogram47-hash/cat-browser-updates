@@ -12,7 +12,7 @@ const DEFAULT_SEARCH_ENGINES = {
 };
 
 const DEFAULT_ENGINE_ID = 'google';
-const START_PAGE_URL = 'https://www.google.com/';
+const START_PAGE_URL = 'about:blank';
 
 const STORAGE_KEYS = {
     settings: 'catBrowserSettings',
@@ -20,6 +20,7 @@ const STORAGE_KEYS = {
     customEngines: 'catBrowserCustomEngines',
     favorites: 'catBrowserFavorites',
     downloads: 'catBrowserDownloads',
+    accounts: 'catBrowserAccounts',
     darkThemeMigration: 'catBrowserDarkThemeMigrationV1',
     engineMigrationV2: 'catBrowserEngineMigrationV2'
 };
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     searchInput.focus();
+    renderAppVersion();
 });
 
 function setupEventListeners() {
@@ -857,17 +859,81 @@ function initAccountFlow() {
     const accountModal = document.getElementById('accountModal');
     const accountForm = document.getElementById('accountForm');
     const skipBtn = document.getElementById('accountSkip');
+    const modeSignInBtn = document.getElementById('accountModeSignIn');
+    const modeCreateBtn = document.getElementById('accountModeCreate');
+    const accountTitle = document.getElementById('accountTitle');
+    const accountSubtitle = document.getElementById('accountSubtitle');
+    const accountSubmitBtn = document.getElementById('accountSubmitBtn');
+    const accountConfirmWrap = document.getElementById('accountConfirmWrap');
+    const accountConfirmInput = document.getElementById('accountPasswordConfirm');
     const stored = localStorage.getItem('catBrowserAccount');
     if (stored) return;
 
+    let mode = 'signin';
+    const accounts = JSON.parse(localStorage.getItem(STORAGE_KEYS.accounts) || '{}');
+
+    const setMode = (nextMode) => {
+        mode = nextMode;
+        const createMode = mode === 'create';
+
+        modeSignInBtn.classList.toggle('active', !createMode);
+        modeCreateBtn.classList.toggle('active', createMode);
+        accountConfirmWrap.classList.toggle('hidden', !createMode);
+        accountConfirmInput.required = createMode;
+
+        accountTitle.textContent = createMode ? 'Create Account' : 'Welcome back!';
+        accountSubtitle.textContent = createMode
+            ? 'Create a local account (email + password).'
+            : 'Sign in or continue without an account.';
+        accountSubmitBtn.textContent = createMode ? 'Create Account' : 'Sign In';
+    };
+
+    setMode('signin');
     accountModal.classList.remove('hidden');
+
+    modeSignInBtn.addEventListener('click', () => setMode('signin'));
+    modeCreateBtn.addEventListener('click', () => setMode('create'));
 
     accountForm.addEventListener('submit', (event) => {
         event.preventDefault();
         const email = document.getElementById('accountEmail').value.trim();
         const pass = document.getElementById('accountPassword').value.trim();
+        const confirm = accountConfirmInput.value.trim();
         if (!email || !pass) return;
-        localStorage.setItem('catBrowserAccount', JSON.stringify({ email, mode: 'signed' }));
+
+        const emailKey = email.toLowerCase();
+
+        if (mode === 'create') {
+            if (pass !== confirm) {
+                alert('Passwords do not match.');
+                return;
+            }
+            if (accounts[emailKey]) {
+                alert('Account already exists. Use Sign In.');
+                return;
+            }
+            accounts[emailKey] = {
+                email,
+                password: pass,
+                createdAt: new Date().toISOString()
+            };
+            localStorage.setItem(STORAGE_KEYS.accounts, JSON.stringify(accounts));
+        } else {
+            if (!accounts[emailKey]) {
+                alert('Account not found. Use Create Account first.');
+                return;
+            }
+            if (accounts[emailKey].password !== pass) {
+                alert('Wrong password.');
+                return;
+            }
+        }
+
+        localStorage.setItem('catBrowserAccount', JSON.stringify({
+            email,
+            mode: 'signed',
+            auth: mode
+        }));
         accountModal.classList.add('hidden');
     });
 
@@ -875,6 +941,15 @@ function initAccountFlow() {
         localStorage.setItem('catBrowserAccount', JSON.stringify({ mode: 'guest' }));
         accountModal.classList.add('hidden');
     });
+}
+
+function renderAppVersion() {
+    const badge = document.getElementById('appVersionBadge');
+    if (!badge) return;
+
+    const version = window?.catBrowser?.version || '0.0.0';
+    badge.textContent = `v${version}`;
+    badge.title = `Cat Browser version ${version}`;
 }
 
 function saveSettings() {

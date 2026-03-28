@@ -11,6 +11,7 @@
     <div class="app-container">
         <header class="header">
             <div class="header-content">
+                <span id="appVersionBadge" class="version-badge">v...</span>
                 <button class="header-btn" id="historyToggleBtn" title="View history">History</button>
                 <button class="header-btn" id="settingsBtn" title="Open settings">Settings</button>
             </div>
@@ -137,15 +138,23 @@
 
         <div id="accountModal" class="account-modal hidden">
             <div class="account-dialog">
-                <h3>Welcome back!</h3>
-                <p>Enter email and password to sign in, or continue without an account.</p>
+                <h3 id="accountTitle">Welcome!</h3>
+                <p id="accountSubtitle">Choose how to continue.</p>
+                <div class="account-mode-tabs">
+                    <button type="button" id="accountModeSignIn" class="account-mode-btn active">Sign In</button>
+                    <button type="button" id="accountModeCreate" class="account-mode-btn">Create Account</button>
+                </div>
                 <form id="accountForm">
                     <label for="accountEmail">Email</label>
                     <input id="accountEmail" type="email" placeholder="you@example.com" required>
                     <label for="accountPassword">Password</label>
                     <input id="accountPassword" type="password" placeholder="Enter password" required>
+                    <div id="accountConfirmWrap" class="hidden">
+                        <label for="accountPasswordConfirm">Confirm Password</label>
+                        <input id="accountPasswordConfirm" type="password" placeholder="Repeat password">
+                    </div>
                     <div class="account-actions">
-                        <button type="submit" class="save-btn">Sign In</button>
+                        <button id="accountSubmitBtn" type="submit" class="save-btn">Sign In</button>
                         <button type="button" id="accountSkip" class="cancel-btn">Continue without</button>
                     </div>
                 </form>

@@ -42,6 +42,16 @@ body {
 .header-content {
     display: flex;
     gap: 8px;
+    align-items: center;
+}
+
+.version-badge {
+    border: 1px solid var(--border);
+    background: #2d3139;
+    color: #bcc4d6;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
 }
 
 .header-btn {
@@ -468,6 +478,28 @@ body {
 .account-dialog form {
     display: grid;
     gap: 10px;
+}
+
+.account-mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.account-mode-btn {
+    border: 1px solid var(--border);
+    background: #2d3139;
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.account-mode-btn.active {
+    background: #5a86ff;
+    border-color: #5a86ff;
+    color: #fff;
 }
 
 .account-actions {
