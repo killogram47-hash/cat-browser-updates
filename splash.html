@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Browser</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg,#6a5cff,#4cc3ff);
+            color: white;
+            font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+        }
+
+        .box {
+            text-align: center;
+            width: 85%;
+        }
+
+        .cat {
+            font-size: 64px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #ff4d4d;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 22px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        .bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8b5a2b, #f5af19);
+            animation: load 3s linear forwards;
+        }
+
+        @keyframes load {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <div class="cat" aria-hidden="true">🐱</div>
+    <h3>CatBROWSER загружается...</h3>
+    <p>Подождите немного, пока пёски готовят браузер к возвращению мур-мощности.</p>
+    <div class="progress">
+        <div class="bar"></div>
+    </div>
+</div>
+</body>
+</html>
