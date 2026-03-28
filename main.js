@@ -251,22 +251,32 @@ const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
 
 if (autoUpdater) {
-    autoUpdater.on('update-available', () => {
+    autoUpdater.on('update-available', (info) => {
+        const versionText = info?.version ? `Version: ${info.version}\n\n` : '';
+        const notesRaw = Array.isArray(info?.releaseNotes)
+            ? info.releaseNotes.map((x) => (typeof x === 'string' ? x : x?.note || '')).join('\n')
+            : (typeof info?.releaseNotes === 'string' ? info.releaseNotes : '');
+        const notes = notesRaw ? `What's new:\n${notesRaw}` : 'The update will download in background.';
         dialog.showMessageBox(mainWindow, {
             type: 'info',
             title: 'Update Available',
             message: 'A new version of Cat Browser is available!',
-            detail: 'It will be downloaded in the background. You will be notified when it is ready to install.',
+            detail: `${versionText}${notes}`,
             buttons: ['OK']
         });
     });
 
-    autoUpdater.on('update-downloaded', () => {
+    autoUpdater.on('update-downloaded', (info) => {
+        const versionText = info?.version ? `Version: ${info.version}\n\n` : '';
+        const notesRaw = Array.isArray(info?.releaseNotes)
+            ? info.releaseNotes.map((x) => (typeof x === 'string' ? x : x?.note || '')).join('\n')
+            : (typeof info?.releaseNotes === 'string' ? info.releaseNotes : '');
+        const notes = notesRaw ? `What's new:\n${notesRaw}\n\n` : '';
         dialog.showMessageBox(mainWindow, {
             type: 'info',
             title: 'Update Ready',
             message: 'Update downloaded successfully!',
-            detail: 'The application will restart to apply the update.',
+            detail: `${versionText}${notes}The application will restart to apply the update.`,
             buttons: ['Restart Now', 'Later']
         }).then((result) => {
             if (result.response === 0) {

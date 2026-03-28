@@ -1,6 +1,6 @@
 {
   "name": "cat-browser",
-    "version": "1.0.7",
+    "version": "1.0.8",
   "description": "Cat Browser - A Google-like search application",
   "main": "main.js",
   "author": "Cat Browser",

@@ -12,30 +12,7 @@ const DEFAULT_SEARCH_ENGINES = {
 };
 
 const DEFAULT_ENGINE_ID = 'google';
-const START_PAGE_URL = 'data:text/html;charset=UTF-8,' + encodeURIComponent(`
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cat Browser</title>
-  <style>
-    body{margin:0;background:#101216;color:#e8eaed;font-family:Segoe UI,Arial,sans-serif;display:grid;place-items:center;height:100vh}
-    .wrap{text-align:center;padding:24px}
-    .logo{width:92px;height:92px;border-radius:20px;background:linear-gradient(135deg,#ffb300,#ff6d00);display:grid;place-items:center;margin:0 auto 18px;font-weight:700}
-    h1{margin:0 0 8px;font-size:34px}
-    p{margin:0;color:#9aa0a6}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="logo">CB</div>
-    <h1>Cat Browser</h1>
-    <p>Your browser. Your search.</p>
-  </div>
-</body>
-</html>
-`);
+const START_PAGE_URL = 'https://www.google.com/';
 
 const STORAGE_KEYS = {
     settings: 'catBrowserSettings',
@@ -105,6 +82,8 @@ const panelTabs = {
     downloads: document.getElementById('downloadHistoryTab'),
     favorites: document.getElementById('favoritesTab')
 };
+const catCenter = document.getElementById('catCenter');
+const catSoundButtons = document.querySelectorAll('.cat-sound-btn');
 
 document.addEventListener('DOMContentLoaded', () => {
     loadSettings();
@@ -120,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createTab(START_PAGE_URL, 'Home');
     updateHistoryDisplay();
     initAccountFlow();
+    setupCatSounds();
 
     const logoImg = document.querySelector('.cat-logo-img');
     const logoFallback = document.querySelector('.cat-logo-fallback');
@@ -317,6 +297,60 @@ function updateTabTitle(tabId, title) {
     }
 }
 
+function setupCatSounds() {
+    if (!catSoundButtons.length) return;
+
+    catSoundButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const toneIndex = parseInt(button.dataset.tone || '1', 10);
+            playMeow(toneIndex);
+        });
+    });
+}
+
+function playMeow(tone = 1) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+
+    const context = new AudioCtx();
+    const now = context.currentTime;
+    const base = tone === 2 ? 520 : tone === 3 ? 610 : 460;
+
+    const osc1 = context.createOscillator();
+    const osc2 = context.createOscillator();
+    const gain = context.createGain();
+
+    osc1.type = 'sine';
+    osc2.type = 'triangle';
+    osc1.frequency.setValueAtTime(base, now);
+    osc2.frequency.setValueAtTime(base * 1.5, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.22, now + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.34);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(context.destination);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.34);
+    osc2.stop(now + 0.34);
+}
+
+function updateCatCenterVisibility() {
+    if (!catCenter) return;
+    const webview = getActiveWebview();
+    if (!webview) {
+        catCenter.classList.remove('hidden');
+        return;
+    }
+
+    const url = webview.getURL() || '';
+    const isHome = !url || url === 'about:blank' || url.startsWith('https://www.google.');
+    catCenter.classList.toggle('hidden', !isHome);
+}
+
 function getActiveWebview() {
     return browserViews.querySelector(`[data-tab-id="${activeTabId}"]`);
 }
@@ -329,6 +363,7 @@ function syncAddressAndNavState() {
         backBtn.disabled = true;
         forwardBtn.disabled = true;
         addressInput.value = '';
+        updateCatCenterVisibility();
         return;
     }
 
@@ -348,6 +383,7 @@ function syncAddressAndNavState() {
 
     renderTabs();
     updateFavoriteButtonState();
+    updateCatCenterVisibility();
 }
 
 function navigateCurrentTab(rawInput) {

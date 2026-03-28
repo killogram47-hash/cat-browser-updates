@@ -137,9 +137,77 @@ body {
 }
 
 .button-group,
-.tab-strip,
 .hero-stage {
     display: none;
+}
+
+.button-group {
+    display: none;
+}
+
+.tab-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #20242c;
+    padding: 6px;
+}
+
+.tab-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    flex: 1;
+    padding-bottom: 2px;
+}
+
+.tab-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 160px;
+    max-width: 260px;
+    border: 1px solid #3f434d;
+    background: #2a2f38;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 7px 10px;
+    cursor: pointer;
+}
+
+.tab-item.active {
+    background: #343b48;
+    border-color: #6a89ff;
+}
+
+.tab-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+    flex: 1;
+}
+
+.tab-close {
+    border: none;
+    background: transparent;
+    color: #c2c7d0;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.new-tab-btn {
+    border: 1px solid var(--border);
+    background: #2f3540;
+    color: var(--text);
+    border-radius: 10px;
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+    cursor: pointer;
 }
 
 .browser-toolbar {
@@ -147,6 +215,10 @@ body {
     grid-template-columns: repeat(4, auto) 1fr auto;
     gap: 8px;
     align-items: center;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #20242c;
 }
 
 .nav-btn,
@@ -175,6 +247,7 @@ body {
     min-height: 0;
     padding: 0;
     background: #17191e;
+    position: relative;
 }
 
 .browser-views {
@@ -194,6 +267,55 @@ body {
 
 .browser-frame.active {
     display: flex;
+}
+
+.cat-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid #3f4552;
+    background: rgba(30, 35, 44, 0.88);
+    border-radius: 18px;
+    padding: 16px 20px;
+    text-align: center;
+    z-index: 20;
+    backdrop-filter: blur(2px);
+}
+
+.cat-center.hidden {
+    display: none;
+}
+
+.cat-center-title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.cat-sound-grid {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 10px 0 8px;
+}
+
+.cat-sound-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    border: 1px solid #596074;
+    background: #2d3442;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.cat-sound-btn:hover {
+    background: #394154;
+}
+
+.cat-center-hint {
+    font-size: 12px;
+    color: var(--muted);
 }
 
 .history-panel {
